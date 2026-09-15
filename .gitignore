@@ -1,0 +1,29 @@
+# 编译产物
+/flare
+/cloudflared
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 本地运行配置/数据
+fast-config.yaml
+*.log
+
+# Wails 构建输出
+desktop/build/bin/
+desktop/build/darwin/*.entitlements
+
+# 前端依赖（本项目无，防御性忽略）
+node_modules/
+desktop/frontend/node_modules/
+
+# 系统/编辑器
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 测试/覆盖率
+coverage.out
+*.test

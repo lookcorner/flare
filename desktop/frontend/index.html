@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Flare</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 0s.75 3-1.5 6c-1.68 2.24-3 3.9-3 6.5a6 6 0 0 0 12 0c0-1.5-.75-3-1.5-4.5-.53 1.05-1.2 1.8-2.25 2.25.38-3.75-1.5-8.25-3.75-10.25zM12 13.5c1.5 1.5 2.25 3 2.25 4.5a2.25 2.25 0 1 1-4.5 0c0-1.5.75-3 2.25-4.5z"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">Flare</div>
+        <div class="brand-sub">内网穿透</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-label">总览</div>
+      <button class="nav-item active" data-page="dashboard">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        概览
+      </button>
+      <button class="nav-item" data-page="fast">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        快速穿透
+      </button>
+
+      <div class="nav-label">隧道</div>
+      <button class="nav-item" data-page="routes">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>
+        域名路由
+        <span class="badge" id="badge-routes" hidden>0</span>
+      </button>
+      <button class="nav-item" data-page="relay">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-5-6-5M12 19h8"/></svg>
+        端口中继
+        <span class="badge" id="badge-rules" hidden>0</span>
+      </button>
+
+      <div class="nav-label">维护</div>
+      <button class="nav-item" data-page="diagnose">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        诊断
+      </button>
+      <button class="nav-item" data-page="logs">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+        日志
+      </button>
+      <button class="nav-item" data-page="settings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        设置
+      </button>
+    </nav>
+
+    <div class="sidebar-status" id="sidebar-status"></div>
+  </aside>
+
+  <!-- 主内容区 -->
+  <main class="main">
+
+    <!-- ========== 概览 ========== -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1>概览</h1>
+          <div class="desc">隧道与中继服务的运行状态</div>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="btn-refresh">刷新</button>
+        </div>
+      </div>
+      <div class="page-body" id="dashboard-body"></div>
+    </section>
+
+    <!-- ========== 快速穿透 ========== -->
+    <section class="page" id="page-fast">
+      <div class="page-header">
+        <div>
+          <h1>快速穿透</h1>
+          <div class="desc">免域名生成临时公网地址，停止后地址失效</div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="fast-hero">
+          <div class="mode-cards" id="fast-modes">
+            <div class="mode-card sel" data-mode="cf">
+              <div class="m-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>
+                Cloudflare 临时域名
+              </div>
+              <div class="m-desc">无需账号，自动生成 *.trycloudflare.com 地址，仅 HTTP</div>
+            </div>
+            <div class="mode-card" data-mode="relay">
+              <div class="m-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-5-6-5M12 19h8"/></svg>
+                自建中继 (frp)
+              </div>
+              <div class="m-desc">走自己的 frps 服务器，支持 TCP / UDP，如 SSH、数据库</div>
+            </div>
+          </div>
+
+          <div class="form-row" id="fast-proto-row" hidden>
+            <label>协议</label>
+            <select class="input" id="fast-proto" style="width:180px"><option value="tcp">tcp</option><option value="udp">udp</option></select>
+          </div>
+
+          <div class="form-row">
+            <label>本地端口</label>
+            <div class="fast-input-row">
+              <input class="fast-port" id="fast-port" value="3000" placeholder="如 3000" inputmode="numeric">
+              <button class="btn primary" style="padding:0 22px;font-size:14px" id="btn-fast-start">开始穿透</button>
+            </div>
+            <div class="hint">将本机该端口上的服务暴露到公网</div>
+          </div>
+
+          <div id="fast-auth-row" style="display:flex;align-items:center;gap:10px;margin-top:6px">
+            <button class="switch" id="fast-auth-sw"></button>
+            <span class="dim" style="font-size:12.5px">启用密码保护（访问者需先登录）</span>
+          </div>
+          <div id="fast-auth-extra" class="auth-extra" hidden>
+            <div style="display:flex;gap:10px;margin-top:10px">
+              <input class="input" id="fast-user" placeholder="用户名" style="flex:1">
+              <input class="input" id="fast-pass" type="password" placeholder="密码" style="flex:1">
+            </div>
+          </div>
+        </div>
+
+        <div class="fast-result" id="fast-result" hidden>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          <div style="flex:1">
+            <div class="fast-url" id="fast-url"></div>
+            <div class="fast-map" id="fast-map"></div>
+          </div>
+          <button class="btn sm" id="btn-fast-copy">复制链接</button>
+          <button class="btn sm danger" id="btn-fast-stop">停止</button>
+        </div>
+
+        <div class="card" id="fast-log-card" hidden style="margin-top:14px">
+          <div class="card-title">输出</div>
+          <div class="log-view inline" id="fast-log" style="margin:0;max-height:220px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 域名路由 ========== -->
+    <section class="page" id="page-routes">
+      <div class="page-header">
+        <div>
+          <h1>域名路由</h1>
+          <div class="desc" id="routes-sub"></div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="btn-sync-ingress">同步 ingress</button>
+          <button class="btn primary" id="btn-add-route">+ 添加路由</button>
+        </div>
+      </div>
+      <div class="page-body" id="routes-body"></div>
+    </section>
+
+    <!-- ========== 端口中继 ========== -->
+    <section class="page" id="page-relay">
+      <div class="page-header">
+        <div>
+          <h1>端口中继</h1>
+          <div class="desc">TCP / UDP 服务通过自建 frps 服务器暴露到公网</div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="btn-relay-check">链路检查</button>
+          <button class="btn" id="btn-relay-server">服务器设置</button>
+          <button class="btn primary" id="btn-add-rule">+ 添加规则</button>
+        </div>
+      </div>
+      <div class="page-body" id="relay-body"></div>
+    </section>
+
+    <!-- ========== 诊断 ========== -->
+    <section class="page" id="page-diagnose">
+      <div class="page-header">
+        <div>
+          <h1>链路诊断</h1>
+          <div class="desc">检测隧道链路每一段的连通性</div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="btn-diagnose">开始诊断</button>
+        </div>
+      </div>
+      <div class="page-body" id="diagnose-body">
+        <div class="empty">点击「开始诊断」检测 cloudflared、Cloudflare API 与每条路由的链路状态。</div>
+      </div>
+    </section>
+
+    <!-- ========== 日志 ========== -->
+    <section class="page" id="page-logs">
+      <div class="page-header">
+        <div>
+          <h1>日志</h1>
+          <div class="desc" id="log-dir"></div>
+        </div>
+        <div class="actions">
+          <div class="log-tabs" id="log-tabs">
+            <button class="log-tab active" data-comp="flare">flare</button>
+            <button class="log-tab" data-comp="cloudflared">cloudflared</button>
+            <button class="log-tab" data-comp="frpc">frpc</button>
+            <button class="log-tab" data-comp="frps">frps</button>
+          </div>
+          <button class="btn sm" id="btn-log-follow" style="margin-left:8px">实时跟踪</button>
+          <button class="btn sm ghost" id="btn-log-open">打开目录</button>
+        </div>
+      </div>
+      <div class="log-view" id="log-view"></div>
+    </section>
+
+    <!-- ========== 设置 ========== -->
+    <section class="page" id="page-settings">
+      <div class="page-header">
+        <div>
+          <h1>设置</h1>
+          <div class="desc">认证信息、隧道与应用数据</div>
+        </div>
+      </div>
+      <div class="page-body" id="settings-body">
+        <div class="card">
+          <div class="card-title">Cloudflare 认证</div>
+          <div class="grid-2">
+            <div class="form-row">
+              <label>API Token</label>
+              <input class="input" type="password" id="set-token" placeholder="在 Cloudflare 控制台创建">
+              <div class="hint">需要 Tunnel 编辑 + DNS 编辑权限</div>
+            </div>
+            <div class="form-row">
+              <label>Account ID</label>
+              <input class="input" id="set-account" placeholder="控制台右侧的 32 位字符">
+              <div class="hint">Cloudflare 控制台右侧的 32 位字符</div>
+            </div>
+          </div>
+          <button class="btn primary sm" id="btn-save-auth">保存认证信息</button>
+          <span class="hint" id="auth-state" style="margin-left:10px"></span>
+        </div>
+
+        <div class="card" id="tunnel-card">
+          <div class="card-title">当前隧道</div>
+          <div id="tunnel-info"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">云端隧道</div>
+          <div id="cloud-tunnels"><button class="btn sm" id="btn-list-tunnels">加载列表</button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">应用数据</div>
+          <div class="kv"><span class="k">数据目录</span><span class="v mono" id="set-datadir"></span></div>
+          <div class="kv"><span class="k">模式</span><span class="v dim" id="set-mode"></span></div>
+          <div class="kv"><span class="k">操作</span><span class="v"><button class="btn sm" id="btn-open-datadir">打开数据目录</button></span></div>
+        </div>
+
+        <div class="card danger-zone">
+          <div class="card-title">危险操作</div>
+          <button class="btn danger sm" id="btn-destroy">销毁隧道</button>
+          <span class="hint" style="margin-left:10px">删除云端隧道、全部 DNS 记录与本地配置，不可恢复</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- 模态框：添加路由 -->
+<div class="modal-mask" id="modal-route">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>添加域名路由</h3>
+      <button class="modal-close" data-close="modal-route">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>完整域名</label>
+        <input class="input" id="route-domain" placeholder="如 chat.example.com">
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>本地端口</label>
+          <input class="input" id="route-port" placeholder="如 8080" inputmode="numeric">
+        </div>
+        <div class="form-row">
+          <label>路由名称（可选）</label>
+          <input class="input" id="route-name" placeholder="默认取域名首段">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin:4px 0 12px">
+        <button class="switch" id="route-auth-sw"></button>
+        <span class="dim" style="font-size:12.5px">启用密码保护</span>
+      </div>
+      <div id="route-auth-extra" hidden>
+        <div style="display:flex;gap:10px">
+          <input class="input" id="route-user" placeholder="用户名" style="flex:1">
+          <input class="input" id="route-pass" type="password" placeholder="密码" style="flex:1">
+        </div>
+      </div>
+      <div class="hint" id="route-err" style="color:var(--red)"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="modal-route">取消</button>
+      <button class="btn primary" id="btn-route-submit">添加路由</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框：添加穿透规则 -->
+<div class="modal-mask" id="modal-rule">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>添加穿透规则</h3>
+      <button class="modal-close" data-close="modal-rule">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>规则名称</label>
+        <input class="input" id="rule-name" placeholder="如 ssh">
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>协议</label>
+          <select class="input" id="rule-proto"><option value="tcp">tcp</option><option value="udp">udp</option></select>
+        </div>
+        <div class="form-row">
+          <label>本地 IP</label>
+          <input class="input" id="rule-ip" value="127.0.0.1">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>本地端口</label>
+          <input class="input" id="rule-local" placeholder="如 22" inputmode="numeric">
+        </div>
+        <div class="form-row">
+          <label>公网端口（可选）</label>
+          <input class="input" id="rule-remote" placeholder="留空由服务器分配" inputmode="numeric">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:2px 0 4px">
+        <button class="switch" id="rule-force"></button>
+        <span class="dim" style="font-size:12.5px">覆盖同名规则</span>
+      </div>
+      <div class="hint" id="rule-err" style="color:var(--red)"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="modal-rule">取消</button>
+      <button class="btn primary" id="btn-rule-submit">添加规则</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框：中继服务器设置 -->
+<div class="modal-mask" id="modal-relay-server">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>中继服务器设置</h3>
+      <button class="modal-close" data-close="modal-relay-server">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>服务器地址</label>
+        <input class="input" id="relay-addr" placeholder="IP:端口，如 1.2.3.4:7000">
+      </div>
+      <div class="form-row">
+        <label>Auth Token（可选）</label>
+        <input class="input" type="password" id="relay-token" placeholder="frps 开启 auth.token 时必填">
+        <div class="hint">frps 服务端 auth.token；留空表示服务器未开鉴权</div>
+      </div>
+      <div class="hint" id="relay-err" style="color:var(--red)"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="modal-relay-server">取消</button>
+      <button class="btn primary" id="btn-relay-save">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框：创建隧道 -->
+<div class="modal-mask" id="modal-tunnel">
+  <div class="modal" style="width:380px">
+    <div class="modal-head">
+      <h3>创建隧道</h3>
+      <button class="modal-close" data-close="modal-tunnel">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>隧道名称</label>
+        <input class="input" id="tunnel-name" value="flare" placeholder="如 flare">
+      </div>
+      <div class="hint" id="tunnel-err" style="color:var(--red)"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="modal-tunnel">取消</button>
+      <button class="btn primary" id="btn-tunnel-submit">创建</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框：确认操作 -->
+<div class="modal-mask" id="modal-confirm">
+  <div class="modal" style="width:380px">
+    <div class="modal-head"><h3 id="confirm-title">确认</h3><button class="modal-close" data-close="modal-confirm">×</button></div>
+    <div class="modal-body">
+      <div style="font-size:13px;margin-bottom:6px" id="confirm-msg"></div>
+      <div class="hint" id="confirm-detail"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="modal-confirm">取消</button>
+      <button class="btn danger" id="btn-confirm-ok">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# flare 中继服务端 Docker 部署
+#
+# 用法:
+#   1. cp frps.toml.example frps.toml，把 auth.token 改成自己的随机串
+#   2. docker compose up -d
+#
+# 端口说明:
+#   7000      — frps 控制端口（客户端 flare relay init <IP>:7000 用这个）
+#   6000-6100 — 穿透端口范围（客户端 --remote 落在这个区间，按需调整）
+#
+# 镜像说明:
+#   版本号与 flare 内置的 frp 版本保持一致；alpine 变体体积最小。
+#   用的是 host 网络，端口不用在 compose 里再映射一遍。
+
+services:
+  frps:
+    image: snowdreamtech/frps:0.71.0-alpine
+    container_name: flare-relay
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./frps.toml:/etc/frp/frps.toml:ro

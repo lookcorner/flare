@@ -1,0 +1,13 @@
+# flare 中继服务端配置（Docker 版）
+#
+# 用法: 复制为 frps.toml 再启动容器，auth.token 必须换成自己的随机串——
+# 它就是客户端的登录密码，谁拿到谁都能借用你的服务器开端口。
+# 生成一条: openssl rand -hex 16
+#
+# 完整配置参考: https://github.com/fatedier/frp/blob/dev/conf/frps_full_example.toml
+
+bindPort = 7000
+auth.token = "请替换为随机令牌"
+
+# 限制客户端能占用哪些公网端口；不写 = 不限制（按需启用）
+# allowPorts = [{ start = 6000, end = 6100 }]

@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flare 桌面版 - 界面原型</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --bg-titlebar: #0e1016;
+    --bg-sidebar: #10131b;
+    --bg-card: #141926;
+    --bg-inset: #0e1220;
+    --bg-hover: #1b2130;
+    --bg-active: #232b3f;
+    --border: #232b3d;
+    --border-light: #2d3649;
+    --text: #e7eaf2;
+    --text-dim: #8b93a8;
+    --text-faint: #5b6377;
+    --accent: #ff6b2c;
+    --accent-hover: #ff7f45;
+    --accent-dim: rgba(255, 107, 44, .12);
+    --green: #33c481;
+    --green-dim: rgba(51, 196, 129, .12);
+    --red: #e5484d;
+    --red-dim: rgba(229, 72, 77, .12);
+    --yellow: #f5a524;
+    --yellow-dim: rgba(245, 165, 36, .12);
+    --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --radius: 8px;
+    --radius-sm: 6px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #05060a;
+    color: var(--text);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== 桌面窗口外框 ===== */
+  .window {
+    width: 1120px;
+    height: 740px;
+    max-width: 100%;
+    background: var(--bg);
+    border: 1px solid #262c3d;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.03) inset;
+  }
+  .titlebar {
+    height: 40px;
+    background: var(--bg-titlebar);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .traffic { display: flex; gap: 8px; }
+  .traffic i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  .traffic i:nth-child(1) { background: #ff5f57; }
+  .traffic i:nth-child(2) { background: #febc2e; }
+  .traffic i:nth-child(3) { background: #28c840; }
+  .titlebar .title {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+  .titlebar .ver { font-size: 11px; color: var(--text-faint); font-family: var(--mono); }
+
+  .app { flex: 1; display: flex; min-height: 0; }
+
+  /* ===== 侧边栏 ===== */
+  .sidebar {
+    width: 196px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 16px 16px 14px;
+  }
+  .brand-icon {
+    width: 28px; height: 28px;
+    background: var(--accent-dim);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .brand-name { font-size: 15px; font-weight: 700; letter-spacing: .2px; }
+  .brand-sub { font-size: 10px; color: var(--text-faint); margin-top: 1px; }
+
+  .nav { padding: 4px 8px; flex: 1; }
+  .nav-label {
+    font-size: 10px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 12px 8px 5px;
+    font-weight: 600;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 7px 8px;
+    border: none;
+    background: none;
+    color: var(--text-dim);
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    margin-bottom: 1px;
+  }
+  .nav-item:hover { background: var(--bg-hover); color: var(--text); }
+  .nav-item.active { background: var(--bg-active); color: var(--text); font-weight: 500; }
+  .nav-item svg { flex-shrink: 0; opacity: .85; }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 9px;
+    font-family: var(--mono);
+  }
+
+  .sidebar-status {
+    border-top: 1px solid var(--border);
+    padding: 10px 14px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .sidebar-status .row { display: flex; align-items: center; gap: 7px; padding: 3px 0; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot.on { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot.off { background: #454d63; }
+  .dot.warn { background: var(--yellow); }
+
+  /* ===== 主区域 ===== */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .page-header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .page-header h1 { font-size: 17px; font-weight: 650; }
+  .page-header .desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .page-header .actions { margin-left: auto; display: flex; gap: 8px; }
+
+  .page-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+  .page { display: none; flex: 1; flex-direction: column; min-height: 0; }
+  .page.active { display: flex; }
+
+  /* ===== 通用组件 ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .12s;
+  }
+  .btn:hover { background: var(--bg-hover); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn.danger { color: var(--red); border-color: rgba(229,72,77,.4); }
+  .btn.danger:hover { background: var(--red-dim); }
+  .btn.ghost { border-color: transparent; background: none; color: var(--text-dim); }
+  .btn.ghost:hover { background: var(--bg-hover); color: var(--text); }
+  .btn.sm { padding: 4px 9px; font-size: 12px; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .card + .card { margin-top: 14px; }
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .pill.on { background: var(--green-dim); color: var(--green); }
+  .pill.off { background: rgba(91,99,119,.15); color: var(--text-faint); }
+  .pill.warn { background: var(--yellow-dim); color: var(--yellow); }
+
+  .mono { font-family: var(--mono); font-size: 12px; }
+  .dim { color: var(--text-dim); }
+  .faint { color: var(--text-faint); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 0 12px 9px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .1s; }
+  tbody tr:hover { background: var(--bg-hover); }
+
+  .form-row { margin-bottom: 14px; }
+  .form-row label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .input, select.input {
+    width: 100%;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    padding: 7px 11px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .12s;
+  }
+  .input:focus { border-color: var(--accent); }
+  .input::placeholder { color: var(--text-faint); }
+  .hint { font-size: 11px; color: var(--text-faint); margin-top: 5px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* ===== 概览页 ===== */
+  .svc-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .svc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .svc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .svc-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .svc-icon.cf { background: rgba(246,130,31,.13); color: #f6821f; }
+  .svc-icon.frp { background: rgba(74,144,226,.13); color: #4a90e2; }
+  .svc-name { font-size: 14px; font-weight: 650; }
+  .svc-sub { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
+  .svc-head .pill { margin-left: auto; }
+  .svc-meta { font-size: 12px; color: var(--text-dim); display: flex; flex-direction: column; gap: 5px; margin-bottom: 13px; }
+  .svc-meta .k { color: var(--text-faint); display: inline-block; width: 74px; }
+  .svc-actions { display: flex; gap: 8px; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stat .num { font-size: 22px; font-weight: 700; font-family: var(--mono); }
+  .stat .lbl { font-size: 12px; color: var(--text-dim); }
+  .stat-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+
+  .quick-list { display: flex; flex-direction: column; }
+  .quick-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    background: none;
+    border-left: none; border-right: none; border-top: none;
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+    border-radius: 4px;
+  }
+  .quick-item:last-child { border-bottom: none; }
+  .quick-item:hover { background: var(--bg-hover); }
+  .quick-item .q-icon {
+    width: 28px; height: 28px;
+    background: var(--bg-inset);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .quick-item .arrow { margin-left: auto; color: var(--text-faint); }
+
+  /* ===== 快速穿透页 ===== */
+  .fast-hero {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+    margin-bottom: 14px;
+  }
+  .fast-input-row { display: flex; gap: 10px; margin: 14px 0; }
+  .fast-port {
+    flex: 1;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 16px;
+    font-family: var(--mono);
+    outline: none;
+  }
+  .fast-port:focus { border-color: var(--accent); }
+  .mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .mode-card {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    cursor: pointer;
+    background: var(--bg-inset);
+    transition: all .12s;
+  }
+  .mode-card:hover { border-color: var(--text-faint); }
+  .mode-card.sel { border-color: var(--accent); background: var(--accent-dim); }
+  .mode-card .m-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; display: flex; align-items: center; gap: 7px; }
+  .mode-card .m-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; }
+
+  .fast-result {
+    background: var(--green-dim);
+    border: 1px solid rgba(51,196,129,.35);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .fast-url { font-family: var(--mono); font-size: 15px; color: var(--green); font-weight: 600; }
+  .fast-map { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+
+  /* ===== 开关 ===== */
+  .switch {
+    position: relative;
+    width: 34px; height: 20px;
+    background: #333c52;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .15s;
+  }
+  .switch.on { background: var(--accent); }
+  .switch.on::after { transform: translateX(14px); }
+
+  /* ===== 诊断页 ===== */
+  .diag-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .diag-item:last-child { border-bottom: none; }
+  .diag-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .diag-check.ok { background: var(--green-dim); color: var(--green); }
+  .diag-check.fail { background: var(--red-dim); color: var(--red); }
+  .diag-check.skip { background: rgba(91,99,119,.18); color: var(--text-faint); }
+  .diag-name { font-weight: 600; font-size: 13px; }
+  .diag-detail { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+  .diag-right { margin-left: auto; text-align: right; font-size: 11.5px; color: var(--text-faint); font-family: var(--mono); }
+
+  /* ===== 日志页 ===== */
+  .log-tabs { display: flex; gap: 4px; }
+  .log-tab {
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: none;
+    color: var(--text-dim);
+    font-size: 12.5px;
+    font-family: var(--mono);
+    cursor: pointer;
+  }
+  .log-tab:hover { background: var(--bg-hover); }
+  .log-tab.active { background: var(--bg-active); color: var(--text); }
+  .log-view {
+    flex: 1;
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 14px 24px 20px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.75;
+    overflow-y: auto;
+    color: #b6bdd0;
+  }
+  .log-view .t { color: var(--text-faint); }
+  .log-view .lv-i { color: #4a90e2; }
+  .log-view .lv-w { color: var(--yellow); }
+  .log-view .lv-e { color: var(--red); }
+  .log-view .hl { color: var(--green); }
+
+  /* ===== 设置页 ===== */
+  .kv { display: flex; padding: 8px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+  .kv:last-child { border-bottom: none; }
+  .kv .k { width: 130px; color: var(--text-faint); flex-shrink: 0; }
+  .kv .v { color: var(--text); word-break: break-all; }
+  .danger-zone { border-color: rgba(229,72,77,.35); }
+  .danger-zone .card-title { color: var(--red); }
+
+  /* ===== 模态框 ===== */
+  .modal-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(4,5,9,.65);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    width: 420px;
+    background: #161b29;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.55);
+    overflow: hidden;
+  }
+  .modal-head {
+    padding: 15px 20px 13px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+  .modal-head h3 { font-size: 14px; font-weight: 650; }
+  .modal-close {
+    margin-left: auto;
+    background: none; border: none;
+    color: var(--text-faint);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 4px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 18px 20px; }
+  .modal-foot {
+    padding: 13px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .auth-extra { padding-top: 4px; }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1d2436;
+    border: 1px solid var(--border-light);
+    color: var(--text);
+    font-size: 13px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: all .25s;
+    pointer-events: none;
+    z-index: 99;
+    box-shadow: 0 8px 28px rgba(0,0,0,.5);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #2a3247; border-radius: 5px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body>
+
+<div class="window">
+  <!-- 标题栏 -->
+  <div class="titlebar">
+    <div class="traffic"><i></i><i></i><i></i></div>
+    <div class="title">Flare</div>
+    <div class="ver">v1.4.2</div>
+  </div>
+
+  <div class="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 0s.75 3-1.5 6c-1.68 2.24-3 3.9-3 6.5a6 6 0 0 0 12 0c0-1.5-.75-3-1.5-4.5-.53 1.05-1.2 1.8-2.25 2.25.38-3.75-1.5-8.25-3.75-10.25zM12 13.5c1.5 1.5 2.25 3 2.25 4.5a2.25 2.25 0 1 1-4.5 0c0-1.5.75-3 2.25-4.5z"/></svg>
+        </div>
+        <div>
+          <div class="brand-name">Flare</div>
+          <div class="brand-sub">内网穿透</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-label">总览</div>
+        <button class="nav-item active" data-page="dashboard">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          概览
+        </button>
+        <button class="nav-item" data-page="fast">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          快速穿透
+        </button>
+
+        <div class="nav-label">隧道</div>
+        <button class="nav-item" data-page="routes">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>
+          域名路由
+          <span class="badge">3</span>
+        </button>
+        <button class="nav-item" data-page="relay">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-5-6-5M12 19h8"/></svg>
+          端口中继
+          <span class="badge">3</span>
+        </button>
+
+        <div class="nav-label">维护</div>
+        <button class="nav-item" data-page="diagnose">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          诊断
+        </button>
+        <button class="nav-item" data-page="logs">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+          日志
+        </button>
+        <button class="nav-item" data-page="settings">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          设置
+        </button>
+      </nav>
+
+      <div class="sidebar-status">
+        <div class="row"><span class="dot on"></span>cloudflared · 运行中</div>
+        <div class="row"><span class="dot on"></span>frpc · 运行中</div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main">
+
+      <!-- ========== 概览 ========== -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1>概览</h1>
+            <div class="desc">隧道与中继服务的运行状态</div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" onclick="toast('正在刷新状态…')">刷新</button>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="svc-cards">
+            <div class="svc-card">
+              <div class="svc-head">
+                <div class="svc-icon cf">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 19a4.5 4.5 0 0 0 .42-8.98 6.5 6.5 0 0 0-12.66-1.4A5 5 0 0 0 6 18.5h11.5z"/></svg>
+                </div>
+                <div>
+                  <div class="svc-name">Cloudflare 隧道</div>
+                  <div class="svc-sub">HTTP / HTTPS 域名路由</div>
+                </div>
+                <span class="pill on"><span class="dot on"></span>运行中</span>
+              </div>
+              <div class="svc-meta">
+                <div><span class="k">隧道</span><span class="mono">home-server</span></div>
+                <div><span class="k">进程 PID</span><span class="mono">42817</span></div>
+                <div><span class="k">运行时长</span><span class="mono">3 天 7 小时</span></div>
+              </div>
+              <div class="svc-actions">
+                <button class="btn sm" onclick="toast('隧道已重启')">重启</button>
+                <button class="btn sm danger" onclick="toggleTunnel(this)">停止</button>
+              </div>
+            </div>
+
+            <div class="svc-card">
+              <div class="svc-head">
+                <div class="svc-icon frp">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-5-6-5M12 19h8"/></svg>
+                </div>
+                <div>
+                  <div class="svc-name">端口中继</div>
+                  <div class="svc-sub">TCP / UDP · frp</div>
+                </div>
+                <span class="pill on"><span class="dot on"></span>运行中</span>
+              </div>
+              <div class="svc-meta">
+                <div><span class="k">服务器</span><span class="mono">45.32.18.7:7000</span></div>
+                <div><span class="k">进程 PID</span><span class="mono">42903</span></div>
+                <div><span class="k">穿透规则</span><span class="mono">3 条</span></div>
+              </div>
+              <div class="svc-actions">
+                <button class="btn sm" onclick="toast('frpc 已重启')">重启</button>
+                <button class="btn sm danger" onclick="toggleTunnel(this)">停止</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat">
+              <div class="stat-icon" style="background:var(--accent-dim);color:var(--accent)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>
+              </div>
+              <div><div class="num">3</div><div class="lbl">域名路由</div></div>
+            </div>
+            <div class="stat">
+              <div class="stat-icon" style="background:rgba(74,144,226,.13);color:#4a90e2">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-5-6-5M12 19h8"/></svg>
+              </div>
+              <div><div class="num">3</div><div class="lbl">穿透规则</div></div>
+            </div>
+            <div class="stat">
+              <div class="stat-icon" style="background:var(--green-dim);color:var(--green)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div><div class="num">2</div><div class="lbl">密码保护</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">快捷操作</div>
+            <div class="quick-list">
+              <button class="quick-item" onclick="go('fast')">
+                <span class="q-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                <div>
+                  <div>快速穿透一个端口</div>
+                  <div class="hint">免域名生成临时公网地址，适合临时分享</div>
+                </div>
+                <span class="arrow">→</span>
+              </button>
+              <button class="quick-item" onclick="openModal('modal-route')">
+                <span class="q-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span>
+                <div>
+                  <div>添加域名路由</div>
+                  <div class="hint">把一个域名指向本地服务（需 Cloudflare 账户）</div>
+                </div>
+                <span class="arrow">→</span>
+              </button>
+              <button class="quick-item" onclick="go('diagnose')">
+                <span class="q-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+                <div>
+                  <div>运行链路诊断</div>
+                  <div class="hint">检测本地服务、DNS 解析、云端记录与 HTTPS 可达性</div>
+                </div>
+                <span class="arrow">→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 快速穿透 ========== -->
+      <section class="page" id="page-fast">
+        <div class="page-header">
+          <div>
+            <h1>快速穿透</h1>
+            <div class="desc">免域名生成临时公网地址，停止后地址失效</div>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="fast-hero">
+            <div class="mode-cards">
+              <div class="mode-card sel" onclick="selectMode(this,'cf')">
+                <div class="m-title">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>
+                  Cloudflare 临时域名
+                </div>
+                <div class="m-desc">无需账号，自动生成 *.trycloudflare.com 地址，仅 HTTP</div>
+              </div>
+              <div class="mode-card" onclick="selectMode(this,'relay')">
+                <div class="m-title">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-5-6-5M12 19h8"/></svg>
+                  自建中继 (frp)
+                </div>
+                <div class="m-desc">走自己的 frps 服务器，支持 TCP / UDP，如 SSH、数据库</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label>本地端口</label>
+              <div class="fast-input-row">
+                <input class="fast-port" value="3000" placeholder="如 3000">
+                <button class="btn primary" style="padding:0 22px;font-size:14px" onclick="startFast()">开始穿透</button>
+              </div>
+              <div class="hint">将本机该端口上的服务暴露到公网</div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+              <button class="switch" id="fast-auth-sw" onclick="this.classList.toggle('on');document.getElementById('fast-auth-extra').style.display=this.classList.contains('on')?'flex':'none'"></button>
+              <span class="dim" style="font-size:12.5px">启用密码保护（访问者需先登录）</span>
+            </div>
+            <div id="fast-auth-extra" class="auth-extra" style="display:none;margin-top:10px;gap:10px;flex:none">
+              <div style="display:flex;gap:10px;width:100%">
+                <input class="input" placeholder="用户名" style="flex:1">
+                <input class="input" type="password" placeholder="密码" style="flex:1">
+              </div>
+            </div>
+          </div>
+
+          <div class="fast-result">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+            <div style="flex:1">
+              <div class="fast-url">https://stable-river-8f3k.trycloudflare.com</div>
+              <div class="fast-map">→ http://localhost:3000 · 已运行 00:14:32 · 关闭窗口或点停止后失效</div>
+            </div>
+            <button class="btn sm" onclick="toast('链接已复制')">复制链接</button>
+            <button class="btn sm danger" onclick="toast('已停止穿透')">停止</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 域名路由 ========== -->
+      <section class="page" id="page-routes">
+        <div class="page-header">
+          <div>
+            <h1>域名路由</h1>
+            <div class="desc">Cloudflare 隧道 · <span class="mono">home-server</span> <span class="pill on" style="margin-left:6px"><span class="dot on"></span>运行中</span></div>
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="toast('正在同步 ingress…')">同步 ingress</button>
+            <button class="btn primary" onclick="openModal('modal-route')">+ 添加路由</button>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="card" style="padding:6px 8px">
+            <table>
+              <thead>
+                <tr><th style="padding-left:12px">名称</th><th>域名</th><th>本地服务</th><th>密码保护</th><th>链路</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>web</strong></td>
+                  <td class="mono">web.example.com</td>
+                  <td class="mono dim">localhost:3000</td>
+                  <td><span class="pill on">admin</span></td>
+                  <td><span class="pill on">✓ 200</span></td>
+                  <td style="text-align:right">
+                    <button class="btn sm ghost" onclick="toast('编辑路由 web')">编辑</button>
+                    <button class="btn sm ghost" style="color:var(--red)" onclick="confirmDelete('路由 web','将同时删除云端 DNS 记录 web.example.com')">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>api</strong></td>
+                  <td class="mono">api.example.com</td>
+                  <td class="mono dim">localhost:8080</td>
+                  <td class="faint">—</td>
+                  <td><span class="pill on">✓ 200</span></td>
+                  <td style="text-align:right">
+                    <button class="btn sm ghost" onclick="toast('编辑路由 api')">编辑</button>
+                    <button class="btn sm ghost" style="color:var(--red)" onclick="confirmDelete('路由 api','将同时删除云端 DNS 记录 api.example.com')">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>nas</strong></td>
+                  <td class="mono">nas.example.com</td>
+                  <td class="mono dim">localhost:5000</td>
+                  <td><span class="pill on">ops</span></td>
+                  <td><span class="pill warn">✗ 本地服务无响应</span></td>
+                  <td style="text-align:right">
+                    <button class="btn sm ghost" onclick="toast('编辑路由 nas')">编辑</button>
+                    <button class="btn sm ghost" style="color:var(--red)" onclick="confirmDelete('路由 nas','将同时删除云端 DNS 记录 nas.example.com')">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hint" style="margin-top:10px">路由变更会推送到云端 ingress；删除路由会一并清理对应 DNS 记录。</div>
+        </div>
+      </section>
+
+      <!-- ========== 端口中继 ========== -->
+      <section class="page" id="page-relay">
+        <div class="page-header">
+          <div>
+            <h1>端口中继</h1>
+            <div class="desc">TCP / UDP 服务通过自建 frps 服务器暴露到公网</div>
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="openModal('modal-relay-server')">服务器设置</button>
+            <button class="btn primary" onclick="openModal('modal-rule')">+ 添加规则</button>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="card" style="margin-bottom:14px;display:flex;align-items:center;gap:16px">
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:9px">
+                <span class="mono" style="font-size:14px;font-weight:600">45.32.18.7:7000</span>
+                <span class="pill on"><span class="dot on"></span>frpc 运行中 · PID 42903</span>
+              </div>
+              <div class="hint" style="margin-top:5px">令牌已设置 · 规则改动后需重启 frpc 生效</div>
+            </div>
+            <button class="btn sm" onclick="toast('frpc 已重启')">重启</button>
+            <button class="btn sm danger" onclick="toast('frpc 已停止')">停止</button>
+          </div>
+
+          <div class="card" style="padding:6px 8px">
+            <table>
+              <thead>
+                <tr><th style="padding-left:12px">名称</th><th>协议</th><th>本地地址</th><th>公网地址</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>ssh</strong></td>
+                  <td><span class="pill off" style="font-family:var(--mono)">tcp</span></td>
+                  <td class="mono dim">127.0.0.1:22</td>
+                  <td class="mono">45.32.18.7:6022</td>
+                  <td style="text-align:right">
+                    <button class="btn sm ghost" onclick="toast('编辑规则 ssh')">编辑</button>
+                    <button class="btn sm ghost" style="color:var(--red)" onclick="confirmDelete('穿透规则 ssh','删除后需重启 frpc 生效')">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>mysql</strong></td>
+                  <td><span class="pill off" style="font-family:var(--mono)">tcp</span></td>
+                  <td class="mono dim">127.0.0.1:3306</td>
+                  <td class="mono">45.32.18.7:3306</td>
+                  <td style="text-align:right">
+                    <button class="btn sm ghost" onclick="toast('编辑规则 mysql')">编辑</button>
+                    <button class="btn sm ghost" style="color:var(--red)" onclick="confirmDelete('穿透规则 mysql','删除后需重启 frpc 生效')">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>mc-server</strong></td>
+                  <td><span class="pill off" style="font-family:var(--mono)">udp</span></td>
+                  <td class="mono dim">127.0.0.1:25565</td>
+                  <td class="mono">45.32.18.7:25565</td>
+                  <td style="text-align:right">
+                    <button class="btn sm ghost" onclick="toast('编辑规则 mc-server')">编辑</button>
+                    <button class="btn sm ghost" style="color:var(--red)" onclick="confirmDelete('穿透规则 mc-server','删除后需重启 frpc 生效')">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 诊断 ========== -->
+      <section class="page" id="page-diagnose">
+        <div class="page-header">
+          <div>
+            <h1>链路诊断</h1>
+            <div class="desc">检测隧道链路每一段的连通性</div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="toast('正在重新诊断…')">重新诊断</button>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">基础环境</div>
+            <div class="diag-item">
+              <span class="diag-check ok">✓</span>
+              <div><div class="diag-name">cloudflared</div><div class="diag-detail">已安装 · /Users/rentong/.flare/bin/cloudflared</div></div>
+              <div class="diag-right">2025.8.1<br>PID 42817 运行中</div>
+            </div>
+            <div class="diag-item">
+              <span class="diag-check ok">✓</span>
+              <div><div class="diag-name">Cloudflare API</div><div class="diag-detail">认证有效 · 账户下 4 个域名</div></div>
+              <div class="diag-right">可达<br>187ms</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">路由链路（3 条 · 2 通 / 1 断）</div>
+            <div class="diag-item">
+              <span class="diag-check ok">✓</span>
+              <div><div class="diag-name">web</div><div class="diag-detail mono">web.example.com → localhost:3000</div></div>
+              <div class="diag-right" style="color:var(--green)">本地 ✓ · DNS ✓ · HTTPS 200 · 记录 ✓</div>
+            </div>
+            <div class="diag-item">
+              <span class="diag-check ok">✓</span>
+              <div><div class="diag-name">api</div><div class="diag-detail mono">api.example.com → localhost:8080</div></div>
+              <div class="diag-right" style="color:var(--green)">本地 ✓ · DNS ✓ · HTTPS 200 · 记录 ✓</div>
+            </div>
+            <div class="diag-item">
+              <span class="diag-check fail">✗</span>
+              <div><div class="diag-name">nas</div><div class="diag-detail mono">nas.example.com → localhost:5000</div></div>
+              <div class="diag-right"><span style="color:var(--red)">本地 ✗ 连接被拒绝</span> · DNS ✓ · HTTPS 502</div>
+            </div>
+            <div style="padding:10px 4px 0;font-size:12px;color:var(--yellow)">提示: nas 的本地服务未启动，公网访问将返回 502</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 日志 ========== -->
+      <section class="page" id="page-logs">
+        <div class="page-header">
+          <div>
+            <h1>日志</h1>
+            <div class="desc">各组件日志存放于 ~/.flare/logs/</div>
+          </div>
+          <div class="actions">
+            <div class="log-tabs">
+              <button class="log-tab active" onclick="logTab(this)">flare</button>
+              <button class="log-tab" onclick="logTab(this)">cloudflared</button>
+              <button class="log-tab" onclick="logTab(this)">frpc</button>
+              <button class="log-tab" onclick="logTab(this)">frps</button>
+            </div>
+            <button class="btn sm" style="margin-left:8px" onclick="toast('已开启实时跟踪（tail -f）')">实时跟踪</button>
+          </div>
+        </div>
+        <div class="log-view">
+<span class="t">2026-09-15 09:12:04</span> <span class="lv-i">INFO</span> 执行: flare ******
+<span class="t">2026-09-15 09:12:04</span> <span class="lv-i">INFO</span> 读取配置 /Users/rentong/.flare/config.yml
+<span class="t">2026-09-15 09:12:05</span> <span class="lv-i">INFO</span> ingress 配置已同步（3 条路由）
+<span class="t">2026-09-15 09:12:05</span> <span class="lv-i">INFO</span> 鉴权网关已启动: web.example.com → 127.0.0.1:51234 → 127.0.0.1:3000
+<span class="t">2026-09-15 09:12:05</span> <span class="lv-i">INFO</span> 鉴权网关已启动: nas.example.com → 127.0.0.1:51235 → 127.0.0.1:5000
+<span class="t">2026-09-15 09:12:06</span> <span class="lv-i">INFO</span> 启动 cloudflared (PID 42817)
+<span class="t">2026-09-15 09:12:09</span> <span class="lv-w">WARN</span> 路由 nas 本地服务连接被拒绝 (localhost:5000)
+<span class="t">2026-09-15 09:14:41</span> <span class="lv-i">INFO</span> 执行: flare ******
+<span class="t">2026-09-15 09:14:41</span> <span class="lv-i">INFO</span> cloudflared 运行中 (PID: 42817)
+<span class="t">2026-09-15 09:14:41</span> <span class="lv-i">INFO</span> frpc 运行中 (PID: 42903) → 45.32.18.7:7000
+<span class="t">2026-09-15 11:02:18</span> <span class="lv-e">ERR </span> nas.example.com 上游超时（重试 3 次失败）
+<span class="t">2026-09-15 11:02:18</span> <span class="hl">HINT</span> 本地服务 localhost:5000 无响应，请检查该服务</div>
+      </section>
+
+      <!-- ========== 设置 ========== -->
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <div>
+            <h1>设置</h1>
+            <div class="desc">认证信息、隧道与应用数据</div>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="card">
+            <div class="card-title">Cloudflare 认证</div>
+            <div class="grid-2">
+              <div class="form-row">
+                <label>API Token</label>
+                <input class="input" type="password" value="cf_token_example_abc123def456">
+                <div class="hint">需要 Tunnel 编辑 + DNS 编辑权限</div>
+              </div>
+              <div class="form-row">
+                <label>Account ID</label>
+                <input class="input" value="a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4">
+                <div class="hint">Cloudflare 控制台右侧的 32 位字符</div>
+              </div>
+            </div>
+            <button class="btn primary sm" onclick="toast('认证信息已保存')">保存认证信息</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">当前隧道</div>
+            <div class="kv"><span class="k">名称</span><span class="v mono">home-server</span></div>
+            <div class="kv"><span class="k">隧道 ID</span><span class="v mono">f7e2a91c-4b3d-4e8f-9a2c-1d5e6f7a8b9c</span></div>
+            <div class="kv"><span class="k">运行凭据</span><span class="v dim">已保存（创建时自动获取）</span></div>
+            <div class="kv"><span class="k">云端隧道</span><span class="v dim">共 2 条 · <a href="#" style="color:var(--accent)" onclick="toast('查看云端隧道列表');return false">管理孤儿隧道</a></span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">应用数据</div>
+            <div class="kv"><span class="k">数据目录</span><span class="v mono">/Users/rentong/.flare</span></div>
+            <div class="kv"><span class="k">模式</span><span class="v dim">默认模式（exe 旁放 portTable 文件即切换为便携模式）</span></div>
+            <div class="kv"><span class="k">开机自启</span><span class="v"><button class="switch on" onclick="this.classList.toggle('on')"></button></span></div>
+          </div>
+
+          <div class="card danger-zone">
+            <div class="card-title">危险操作</div>
+            <div style="display:flex;gap:10px">
+              <button class="btn danger sm" onclick="toast('已重置本地配置')">重置本地配置</button>
+              <button class="btn danger sm" onclick="confirmDelete('隧道 home-server','将删除云端隧道、全部 DNS 记录与本地配置，不可恢复')">销毁隧道</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- 模态框：添加路由 -->
+<div class="modal-mask" id="modal-route">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>添加域名路由</h3>
+      <button class="modal-close" onclick="closeModal('modal-route')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>完整域名</label>
+        <input class="input" placeholder="如 chat.example.com">
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>本地端口</label>
+          <input class="input" placeholder="如 8080">
+        </div>
+        <div class="form-row">
+          <label>路由名称（可选）</label>
+          <input class="input" placeholder="默认取域名首段">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin:4px 0 12px">
+        <button class="switch" onclick="this.classList.toggle('on');document.getElementById('route-auth-extra').style.display=this.classList.contains('on')?'flex':'none'"></button>
+        <span class="dim" style="font-size:12.5px">启用密码保护</span>
+      </div>
+      <div id="route-auth-extra" style="display:none;gap:10px">
+        <input class="input" placeholder="用户名" style="flex:1">
+        <input class="input" type="password" placeholder="密码" style="flex:1">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('modal-route')">取消</button>
+      <button class="btn primary" onclick="closeModal('modal-route');toast('路由已添加，DNS 记录已创建')">添加路由</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框：添加穿透规则 -->
+<div class="modal-mask" id="modal-rule">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>添加穿透规则</h3>
+      <button class="modal-close" onclick="closeModal('modal-rule')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>规则名称</label>
+        <input class="input" placeholder="如 ssh">
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>协议</label>
+          <select class="input"><option>tcp</option><option>udp</option></select>
+        </div>
+        <div class="form-row">
+          <label>本地 IP</label>
+          <input class="input" value="127.0.0.1">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-row">
+          <label>本地端口</label>
+          <input class="input" placeholder="如 22">
+        </div>
+        <div class="form-row">
+          <label>公网端口（可选）</label>
+          <input class="input" placeholder="留空由服务器分配">
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('modal-rule')">取消</button>
+      <button class="btn primary" onclick="closeModal('modal-rule');toast('规则已添加；frpc 运行中需重启生效')">添加规则</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框：中继服务器设置 -->
+<div class="modal-mask" id="modal-relay-server">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>中继服务器设置</h3>
+      <button class="modal-close" onclick="closeModal('modal-relay-server')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>服务器地址</label>
+        <input class="input" value="45.32.18.7:7000" placeholder="IP:端口，如 1.2.3.4:7000">
+      </div>
+      <div class="form-row">
+        <label>Auth Token（可选）</label>
+        <input class="input" type="password" value="relay_token_xxxxx">
+        <div class="hint">frps 开启 auth.token 时必填</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('modal-relay-server')">取消</button>
+      <button class="btn primary" onclick="closeModal('modal-relay-server');toast('中继服务器配置已保存')">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框：确认删除 -->
+<div class="modal-mask" id="modal-confirm">
+  <div class="modal" style="width:380px">
+    <div class="modal-head"><h3>确认删除</h3><button class="modal-close" onclick="closeModal('modal-confirm')">×</button></div>
+    <div class="modal-body">
+      <div style="font-size:13px;margin-bottom:6px">确定删除 <strong id="confirm-name"></strong> 吗？</div>
+      <div class="hint" id="confirm-detail"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('modal-confirm')">取消</button>
+      <button class="btn danger" onclick="closeModal('modal-confirm');toast('已删除')">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // 页面切换
+  function go(page) {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  }
+  document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => go(b.dataset.page)));
+
+  // 模态框
+  function openModal(id) { document.getElementById(id).classList.add('show'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+  document.querySelectorAll('.modal-mask').forEach(m =>
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); }));
+
+  function confirmDelete(name, detail) {
+    document.getElementById('confirm-name').textContent = name;
+    document.getElementById('confirm-detail').textContent = detail;
+    openModal('modal-confirm');
+  }
+
+  // 快速穿透：模式选择
+  function selectMode(el, mode) {
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('sel'));
+    el.classList.add('sel');
+  }
+  function startFast() { toast('穿透已启动，正在分配公网地址…'); }
+
+  // 启停切换（原型演示）
+  function toggleTunnel(btn) {
+    const card = btn.closest('.svc-card');
+    const pill = card.querySelector('.pill');
+    if (btn.textContent === '停止') {
+      btn.textContent = '启动';
+      pill.className = 'pill off';
+      pill.innerHTML = '<span class="dot off"></span>已停止';
+      toast('已停止');
+    } else {
+      btn.textContent = '停止';
+      pill.className = 'pill on';
+      pill.innerHTML = '<span class="dot on"></span>运行中';
+      toast('已启动');
+    }
+  }
+
+  // 日志 tab
+  function logTab(el) {
+    document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Toast
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>

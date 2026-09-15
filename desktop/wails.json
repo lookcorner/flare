@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Flare",
+  "outputfilename": "Flare",
+  "frontend:install": "",
+  "frontend:build": "",
+  "frontend:dev:watcher": "",
+  "frontend:dev:serverUrl": "",
+  "author": {
+    "name": "rentong",
+    "email": "974075282@qq.com"
+  }
+}

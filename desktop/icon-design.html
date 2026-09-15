@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; padding: 0; }
+  body { width: 1024px; height: 1024px; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 底板：与 UI 一致的深色，左上亮右下暗 -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#262a33"/>
+      <stop offset="0.55" stop-color="#1b1e26"/>
+      <stop offset="1" stop-color="#121419"/>
+    </linearGradient>
+    <!-- 火焰外焰：金黄 → 橙 → 深橙红 -->
+    <linearGradient id="flame" x1="0.3" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#ffc653"/>
+      <stop offset="0.42" stop-color="#ff8223"/>
+      <stop offset="1" stop-color="#f04a17"/>
+    </linearGradient>
+    <!-- 内焰：亮黄芯 -->
+    <linearGradient id="core" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#ffedb8"/>
+      <stop offset="1" stop-color="#ffb648"/>
+    </linearGradient>
+    <!-- 顶部微光 -->
+    <radialGradient id="glow" cx="0.5" cy="0.28" r="0.75">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <!-- macOS 风格圆角底板（约 22.3% 半径的 squircle 近似） -->
+  <rect width="1024" height="1024" rx="228" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="228" fill="url(#glow)"/>
+
+  <!-- 火焰底部光晕 -->
+  <ellipse cx="512" cy="640" rx="230" ry="170" fill="#ff7a1e" opacity="0.28" filter="url(#soft)"/>
+
+  <!-- 外焰：顶部尖峰略偏右，左侧带内勾的火舌 -->
+  <path fill="url(#flame)" d="
+    M 540 178
+    C 585 290, 716 372, 716 552
+    C 716 688, 622 792, 512 792
+    C 402 792, 308 688, 308 552
+    C 308 462, 352 396, 402 344
+    C 406 402, 430 436, 470 452
+    C 452 352, 470 246, 540 178
+    Z"/>
+
+  <!-- 内焰芯 -->
+  <path fill="url(#core)" opacity="0.95" d="
+    M 512 442
+    C 562 506, 596 552, 596 622
+    C 596 692, 558 736, 512 736
+    C 466 736, 428 692, 428 622
+    C 428 552, 462 506, 512 442
+    Z"/>
+</svg>
+</body>
+</html>

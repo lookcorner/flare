@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>访问验证</title>
+<style>
+  body{font-family:system-ui,sans-serif;background:#0b1220;color:#e7ebf3;
+       display:flex;min-height:100vh;align-items:center;justify-content:center}
+  .card{background:#101a2c;border:1px solid #1e2a40;border-radius:14px;padding:32px;width:320px}
+  h1{font-size:18px;margin:0 0 18px}
+  .err{color:#f87171;display:none;font-size:13px;margin-bottom:12px}
+  label{display:block;font-size:13px;color:#8a94a8;margin:10px 0 4px}
+  input{width:100%;box-sizing:border-box;padding:9px;border-radius:8px;border:1px solid #2a3952;
+        background:#0a1322;color:#e7ebf3}
+  button{width:100%;margin-top:18px;padding:10px;border:none;border-radius:8px;
+         background:#f6821f;color:#0b1220;font-weight:700;cursor:pointer}
+</style></head>
+<body><div class="card">
+  <h1>此服务需要身份验证</h1>
+  <div class="err" id="err">用户名或密码错误</div>
+  <form method="POST" action="/___auth/login">
+    <label>用户名</label><input type="text" name="username" required autofocus>
+    <label>密码</label><input type="password" name="password" required>
+    <button type="submit">登 录</button>
+  </form>
+</div>
+<script>if(new URLSearchParams(location.search).has("error")){document.getElementById("err").style.display="block"}</script>
+</body></html>
